@@ -32,7 +32,7 @@ add_block_h1 <- function(secret, id, content, toggle = FALSE){
   headers = c(
     `Authorization` = auth_secret,
     `Notion-Version` = '2022-02-22',
-    `Content-Type` = 'application/json' )
+    `Content-Type` = 'application/json')
 
   res <- httr::PATCH(url = paste0('https://api.notion.com/v1/blocks/', id, '/children'),
                      httr::add_headers(.headers = headers),
