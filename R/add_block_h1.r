@@ -27,6 +27,27 @@ add_block_h1 <- function(secret, id, content, toggle = FALSE){
       }
   }]}')
 
+  payload_list <- list(
+    children = list(
+      list(
+        type = "heading_1",
+        heading_1 = list(
+          rich_text = list(
+            list(
+              type = "text",
+              text = list(
+                content = content,
+                link = "null"
+              )
+            )
+          ),
+          color = "default",
+          is_toggleable = toggle_to_lowercase
+        )
+      )
+    )
+  )
+
   auth_secret <- paste0("Bearer ", secret)
 
   headers = c(
