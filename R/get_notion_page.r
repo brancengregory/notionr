@@ -14,10 +14,12 @@
 #' @importFrom httr content
 #' @importFrom httr content_type
 #' @export
-get_notion_page <- function(secret, id) {
-  url <- paste0("https://api.notion.com/v1/pages/", id)
+get_notion_page <- function(id) {
+  url <- paste0("/pages/", id)
 
   res <- notion_request(url)
+
+  return(res)
 }
 
 

@@ -1,7 +1,6 @@
-base_url <- "https://api.notion.com/v1"
 
-notion_request <- function(endpoint, method = "GET", body = NULL, ...,  all_pages = FALSE, base_url = base_url) {
-  key <- cached_access_code() # Assumes cached_access_code() implementation
+notion_request <- function(endpoint, method = "GET", body = NULL, ...,  all_pages = FALSE, base_url = "https://api.notion.com/v1") {
+  key <- cached_access_code()
 
   req_url <- paste0(base_url, endpoint)
 
