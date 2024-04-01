@@ -1,14 +1,3 @@
-get_block <- function(id) {
-  endpoint <- paste0("blocks/", id)
-
-  res <- notion_request(
-    endpoint = endpoint,
-    method = "GET"
-  )
-
-  res
-}
-
 new_block <- function(x) {
   structure(x, class = "notion_block")
 }
@@ -68,7 +57,50 @@ block_type <- function(x) {
   return(bt)
 }
 
+append_block_children <- function(block_id, children, after = NULL) {
+  ch <- notion_request(
+    endpoint = paste0("/blocks/", block_id, "/children"),
+    method = "PATCH"
+  )
 
+  ch
+}
 
+get_block <- function(block_id) {
+  b <- notion_request(
+    endpoint = paste0("/blocks/", block_id),
+    method = "GET"
+  )
+
+  new_block(b)
+}
+
+get_block_children <- function(block_id) {
+  notion_request(
+    endpoint = paste0("/blocks/", block_id, "/children"),
+    method = "GET"
+  )
+}
+
+update_block <- function(block_id, archived, ...) {
+  b <- notion_request(
+    endpoint = paste0("/blocks/", block_id),
+    method = "GET",
+    body = list(
+      archived = archived
+    )
+  )
+
+  new_block(b)
+}
+
+delete_block <- function(block_id) {
+  b <- notion_request(
+    endpoint = paste0("/blocks/", block_id),
+    method = "DELETE"
+  )
+
+  new_block(b)
+}
 
 

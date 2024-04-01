@@ -24,7 +24,7 @@ validate_database_property <- function(x) {
     is.character(x$id),
   )
 
-  if(!x$type %in% c(
+  if (!x$type %in% c(
     "checkbox",
     "created_by",
     "created_time",
@@ -66,6 +66,18 @@ database_contents <- function(x) {
     tibble::enframe()
 }
 
+create_database <- function(parent, title = NULL, properties) {
+  notion_request(
+    endpoint = "/databases",
+    method = "POST",
+    body = list(
+      parent = parent,
+      title = title,
+      properties = properties
+    )
+  )
+}
+
 query_database <- function(id, filter_properties = NULL, filter = NULL, sorts = NULL, start_cursor = NULL, page_size = NULL) {
   res <- notion_request(
     endpoint = paste0("/databases/", id, "/query"),
@@ -73,4 +85,27 @@ query_database <- function(id, filter_properties = NULL, filter = NULL, sorts = 
   )
 
   new_database(res)
+}
+
+get_database <- function(database_id) {
+  res <- notion_request(
+    endpoint = paste0("/databases/", database_id),
+    method = "GET"
+  )
+
+  return(res)
+}
+
+update_database <- function(database_id, title = NULL, description = NULL, properties = NULL) {
+  db <- notion_request(
+    endpoint = paste0("/databases/", database_id),
+    method = "PATCH",
+    body = list(
+      title = title,
+      description = description,
+      properties = properties
+    )
+  )
+
+  new_database(db)
 }

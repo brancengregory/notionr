@@ -1,17 +1,33 @@
-new_parent <- function(x, type) {
-  if(!type %in% c(
-    "database",
-    "page",
-    "workspace",
-    "block"
-  )) {
-    stop("Invalid parent type")
-  }
-
-  structure(x, class = "notion_parent", type = type)
+new_parent <- function(x = list(), type) {
+  parent_type_class_name <- paste0("notion_parent_", type)
+  structure(x, class = c(parent_type_class_name, "notion_parent"))
 }
 
-validate_parent <- function(x) {
+new_parent_database <- function(x = list()) {
+  new_parent(x, "parent")
+}
+
+validate_parent_database <- function(x = list()) {
+
+}
+
+new_parent_page <- function(x = list()) {
+  new_parent(x, "page")
+}
+
+validate_parent_page <- function(x = list()) {
+
+}
+
+new_parent_block <- function(x = list()) {
+ new_parent(x, "block")
+}
+
+validate_parent_block <- function(x = list()) {
+
+}
+
+validate_parent <- function(x = list()) {
   stopifnot(
     inherits(x, "notion_parent"),
     !is.null(x$id),
@@ -20,7 +36,7 @@ validate_parent <- function(x) {
 
   pt <- parent_type(x)
 
-  if(!pt %in% c(
+  if (!pt %in% c(
     "database",
     "page",
     "workspace",
@@ -29,26 +45,24 @@ validate_parent <- function(x) {
     stop("Invalid parent type")
   }
 
-  if(pt == "database") {
-    stopifnot(!is.null(x$database_id), is.character(x$database_id))
-  } else if(pt == "page") {
-    stopifnot(!is.null(x$page_id), is.character(x$page_id))
-  } else if(pt == "workspace") {
-    stopifnot(!is.null(x$workspace), isTRUE(x$workspace))
-  } else if(pt == "block") {
-    stopifnot(!is.null(x$block_id), is.character(x$block_id))
-  }
+  switch(
+    pt,
+    database = validate_parent_database(x),
+    page = validate_parent_page(x),
+    block = validate_parent_block(x),
+    workspace = NULL
+  )
 
   return(x)
 }
 
-parent_type <- function(x) {
+parent_type <- function(x = list()) {
   stopifnot(inherits(x, "notion_parent"))
 
   attr(x, "type", exact = TRUE)
 }
 
-parent_id <- function(x) {
+parent_id <- function(x = list()) {
   stopifnot(inherits(x, "notion_parent"))
 
   pt <- parent_type(x)
