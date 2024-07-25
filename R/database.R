@@ -93,7 +93,9 @@ get_database <- function(database_id) {
     method = "GET"
   )
 
-  return(res)
+  db <- new_database(res)
+
+  return(db)
 }
 
 update_database <- function(database_id, title = NULL, description = NULL, properties = NULL) {
@@ -108,4 +110,23 @@ update_database <- function(database_id, title = NULL, description = NULL, prope
   )
 
   new_database(db)
+}
+
+#' @export
+format.notion_database <- function(x, ...) {
+  cli::cli_format_method({
+    cli::cli_h1("{x$icon$emoji} {x$title[[1]]$plain_text}")
+    cli::cli_text("{.href {x$url}}")
+    cli::cli_dl(
+      items = c(
+        "ID" = x$id
+      )
+    )
+  })
+}
+
+#' @export
+print.notion_database <- function(x, ...) {
+  cat(format(x), sep = "\n")
+  invisible(x)
 }

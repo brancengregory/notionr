@@ -27,3 +27,22 @@ get_user <- function(user_id) {
 get_token_user <- function() {
   get_user("me")
 }
+
+#' @export
+format.notion_user <- function(x, ...) {
+  cli::cli_format_method({
+    cli::cli_h1("{x$name}")
+    cli::cli_dl(
+      items = c(
+        "ID" = x$id,
+        "Type" = x$type
+      )
+    )
+  })
+}
+
+#' @export
+print.notion_user <- function(x, ...) {
+  cat(format(x), sep = "\n")
+  invisible(x)
+}

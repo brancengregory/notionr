@@ -4,17 +4,23 @@
 \alias{search_workspace}
 \title{Search for databases and pages}
 \usage{
-search_workspace(key, query = NULL, sort = NULL, filter = NULL)
+search_workspace(
+  query = NULL,
+  sort = NULL,
+  filter = NULL,
+  n_results = 10,
+  key = cached_access_code()
+)
 }
 \arguments{
-\item{key}{Notion access key.}
-
 \item{query}{A string which limits which pages are returned by comparing the
 query to the page title. If \code{NULL}, no limiting occurs.}
 
 \item{sort}{A search sort object. If \code{NULL}, no sorting will occur.}
 
 \item{filter}{A search filter object. If \code{NULL} no filtering will occur.}
+
+\item{key}{Notion access key.}
 }
 \value{
 A list of pages and/or databases.

@@ -53,6 +53,7 @@ validate_page_property <- function(x) {
   return(x)
 }
 
+#' @export
 get_page <- function(page_id) {
   p <- notion_request(
     endpoint = paste0("/pages/", page_id),
@@ -104,3 +105,24 @@ archive_page <- function(page_id) {
   new_page(p)
 }
 
+#' @export
+format.notion_page <- function(x, ...) {
+  cli::cli_format_method({
+    cli::cli_h1("{x$icon$emoji} {x$properties$Page$title[[1]]$text$content}")
+    cli::cli_text("{.href {x$url}}")
+    cli::cli_dl(
+      items = c(
+        "ID" = x$id,
+        "Created Time" = x$created_time,
+        "Last Edited Time" = x$last_edited_time,
+        "Archived" = x$archived
+      )
+    )
+  })
+}
+
+#' @export
+print.notion_page <- function(x, ...) {
+  cat(format(x), sep = "\n")
+  invisible(x)
+}
