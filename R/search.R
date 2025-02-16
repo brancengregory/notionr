@@ -32,49 +32,52 @@ new_search_sort <- function(timestamp, direction) {
 #' @seealso [search_filter()] and [search_sort()] to see details on how to
 #'   correctly construct filter and sort objects.
 #' @export
-search_workspace <- function(key, query = NULL, sort = NULL, filter = NULL) {
+search_workspace <- function(
+    query = NULL,
+    sort = NULL,
+    filter = NULL,
+    n_results = 10,
+    key = cached_access_code()
+) {
   stopifnot(nzchar(query) || is.null(query),
             inherits(sort, "notionr_search_sort") || is.null(sort),
             inherits(filter, "notionr_search_filter") || is.null(filter))
+
   # Construct POST body
   body <- list()
-  body <- if (!is.null(query)) {
-    append(body, list("query" = query))
+
+  if (!is.null(query)) {
+    body <- append(body, list("query" = query))
   }
-  body <- if (!is.null(sort)) {
-    append(body, list("sort" = unclass(sort)))
+
+  if (!is.null(sort)) {
+    body <- append(body, list("sort" = unclass(sort)))
   }
-  body <- if (!is.null(filter)) {
-    append(body, list("filter" = unclass(filter)))
+
+  if (!is.null(filter)) {
+    body <- append(body, list("filter" = unclass(filter)))
   }
+
+  # If n_results < 100, change the paging
+  # If equal to 100, no need to change the paging, but don't recurse
+  # If greater than 100, recurse until n_results is reached
+  if (n_results < 100) {
+    body <- append(body, list("page_size" = n_results))
+  } else if (n_results > 100) {
+    body <- append(body, list("page_size" = 100))
+  }
+
+  # If body is empty, set to NULL
   if (identical(body, list())) body <- NULL
-  # Initialize empty list for pagination
-  content_ls <- recurse_cursors_post("https://api.notion.com/v1/search",
-                                     key,
-                                     body,
-                                     cont.ls = NULL)
-  content_ls <- unlist(
-    lapply(content_ls, function(i) {
-      i$results
-    }),
-    recursive = FALSE
+
+  res <- notion_request(
+    endpoint = "/search",
+    method = "POST",
+    body = body,
+    key = key
   )
-  objects <- unlist(lapply(content_ls, function(i) i$object))
-  which_are_databases <- objects == "database"
-  which_are_pages <- objects == "page"
-  content_ls[which_are_databases] <- lapply(
-    content_ls[which_are_databases],
-    new_database
-  )
-  content_ls[which_are_pages] <- lapply(
-    content_ls[which_are_pages],
-    new_page
-  )
-  # Assign key attribute
-  content_ls <- lapply(content_ls, function(i) {
-    `attr<-`(i, "key", key)
-  })
-  return(content_ls)
+
+  return(res$results)
 }
 
 #' Create a search filter

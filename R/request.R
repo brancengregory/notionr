@@ -11,7 +11,7 @@ notion_request <- function(endpoint, method = "GET", body = NULL, ..., all_pages
     )
 
   if (!is.null(body)) {
-    req <- httr2::req_body_json(body)
+    req <- httr2::req_body_json(req = req, data = body)
   }
 
   res <- httr2::req_perform(req) |>
