@@ -1,4 +1,4 @@
-new_block <- function(x) {
+new_block <- function(x, ...) {
   structure(x, class = "notion_block")
 }
 
@@ -102,5 +102,165 @@ delete_block <- function(block_id) {
 
   new_block(b)
 }
+
+#' @export
+format.notion_block <- function(x, ...) {
+  cli::cli_format_method({
+    cli::cli_h1("{x$type}")
+    cli::cli_dl(
+      items = c(
+        "ID" = x$id,
+        "Type" = x$type
+      )
+    )
+  })
+}
+
+#' @export
+print.notion_block <- function(x, ...) {
+  cat(format(x), sep = "\n")
+  invisible(x)
+}
+
+block_bookmark <- function(
+    caption,
+    url
+) {}
+
+block_breadcrumb <- function() {}
+
+block_bulleted_list_item <- function(
+    rich_text = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_callout <- function(
+    rich_text = NULL,
+    icon = NULL,
+    color = NULL
+) {}
+
+block_child_database <- function(
+    title
+) {}
+
+block_child_page <- function(
+    title
+) {}
+
+block_code <- function(
+    caption = NULL,
+    rich_text = NULL,
+    language = NULL
+) {}
+
+block_column_list <- function() {}
+
+block_column <- function() {}
+
+block_divider <- function() {}
+
+block_embed <- function(
+    url
+) {}
+
+block_equation <- function(
+    expression
+) {}
+
+block_file <- function(
+    caption = NULL,
+    type = NULL,
+    file = NULL,
+    name = NULL
+) {}
+
+block_heading_1 <- function(
+    rich_text = NULL,
+    color = NULL,
+    is_toggleable = NULL
+) {}
+
+block_heading_2 <- function(
+    rich_text = NULL,
+    color = NULL,
+    is_toggleable = NULL
+) {}
+
+block_heading_3 <- function(
+    rich_text = NULL,
+    color = NULL,
+    is_toggleable = NULL
+) {}
+
+block_image <- function(
+    file = NULL,
+    caption = NULL,
+    width = NULL,
+    height = NULL
+) {}
+
+block_link_preview <- function(
+    url
+) {}
+
+block_mention <- function(
+    type,
+    ...
+) {}
+
+block_numbered_list_item <- function(
+    rich_text = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_paragraph <- function(
+    rich_text = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_pdf <- function(
+    caption = NULL,
+    type = NULL,
+    ...
+) {}
+
+block_quote <- function(
+    rich_text = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_synced_block <- function(
+    synced_from = NULL
+) {}
+
+block_table <- function(
+    table_width = NULL,
+    has_column_header = NULL,
+    has_row_header = NULL
+) {}
+
+block_table_row <- function(cells = NULL) {}
+
+block_table_of_contents <- function(color = NULL) {}
+
+block_to_do <- function(
+    rich_text = NULL,
+    checked = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_toggle <- function(
+    rich_text = NULL,
+    color = NULL,
+    children = NULL
+) {}
+
+block_video <- function() {}
 
 

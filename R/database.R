@@ -1,4 +1,14 @@
 new_database <- function(x) {
+  x$properties <- x$properties |>
+    purrr::map(~ {
+      new_database_property(
+        id = .x$id,
+        name = .x$name,
+        description = .x$description,
+        type = .x$type
+      )
+    })
+
   structure(x, class = "notion_database")
 }
 
@@ -11,51 +21,6 @@ validate_database <- function(x) {
   )
 
   return(x)
-}
-
-new_database_property <- function(x) {
-  structure(x, class = "notion_database_property")
-}
-
-validate_database_property <- function(x) {
-  stopifnot(
-    inherits(x, "notion_database_property"),
-    !is.null(x$id),
-    is.character(x$id),
-  )
-
-  if (!x$type %in% c(
-    "checkbox",
-    "created_by",
-    "created_time",
-    "date",
-    "email",
-    "files",
-    "formula",
-    "last_edited_by",
-    "last_edited_time",
-    "multi_select",
-    "number",
-    "people",
-    "phone_number",
-    "relation",
-    "rich_text",
-    "rollup",
-    "select",
-    "status",
-    "title",
-    "url"
-  )) {
-    stop("Invalid database property type")
-  }
-
-  return(x)
-}
-
-database_property_type <- function(x) {
-  stopifnot(inherits(x, "notion_database_property"))
-
-  return(x$type)
 }
 
 database_contents <- function(x) {
@@ -78,7 +43,17 @@ create_database <- function(parent, title = NULL, properties) {
   )
 }
 
-query_database <- function(id, filter_properties = NULL, filter = NULL, sorts = NULL, start_cursor = NULL, page_size = NULL) {
+query_database <- function(id, filters = NULL, sorts = NULL, start_cursor = NULL, page_size = NULL) {
+
+  if (!is.null(filters)) {
+    property_filter <- list(
+      "property" = filter_properties,
+      "text" = list(
+        "contains" = filter
+      )
+    )
+  }
+
   res <- notion_request(
     endpoint = paste0("/databases/", id, "/query"),
     method = "POST"
@@ -117,9 +92,21 @@ format.notion_database <- function(x, ...) {
   cli::cli_format_method({
     cli::cli_h1("{x$icon$emoji} {x$title[[1]]$plain_text}")
     cli::cli_text("{.href {x$url}}")
+    cli::cli_h2("Information")
     cli::cli_dl(
       items = c(
-        "ID" = x$id
+        "ID" = x$id,
+        "Created" = x$created_time,
+        "Created by" = x$created_by$id,
+        "Last edited" = x$last_edited_time,
+        "Last edited by" = x$last_edited_by$id
+      )
+    )
+    cli::cli_h2("Properties")
+    cli::cli_dl(
+      items = setNames(
+        purrr::map_chr(db$properties, "type") |> unname(),
+        purrr::map_chr(db$properties, "name") |> unname()
       )
     )
   })
